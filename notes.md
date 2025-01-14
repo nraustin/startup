@@ -8,6 +8,10 @@
 - [Canvas](https://byu.instructure.com)
 - [MDN](https://developer.mozilla.org)
 
+## Git
+
+Review of the git versioning sytem and basic shell commands.
+
 ## AWS
 
 My IP address is: 54.81.96.130
