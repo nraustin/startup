@@ -1,8 +1,8 @@
-# Your startup name here
+# Wall Street Casino
 
 [My Notes](notes.md)
 
-A brief description of the application here. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Wall Street Casino is a simple web based application for betting on live stock market movements using virtual monopoly money.
 
 
 > [!NOTE]
@@ -26,37 +26,67 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 ### Elevator pitch
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+How much money can you make (or lose) by timing the market compared to time in the market? Wall Street Casino offers a platform where users can bet on live stock market movements using virtual currency. Users can view real-time market performance, chat with others, and size their bets. For each stock, users can enter a chat room with a 1 minute line chart of the selected security and view the betting status of other members. Their total winnnings and losses are reflected in the app leaderboard. 
 
 ### Design
 
 ![Design image](placeholder.png)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+This sequence diagram demonstrates how a bet 
 
 ```mermaid
 sequenceDiagram
-    actor You
-    actor Website
-    You->>Website: Replace this with your design
+    actor Jack
+    actor Kate
+    actor Charlie
+    Jack->>Server: Bet NVDA High
+    Server-->>Kate: Update Chat Room (Jack: "Bet NVDA High")
+    Server-->>Charlie: Update Chat Room (Jack: "Bet NVDA High")
+    loop Real-Time Updates
+        Server-->>Jack: Live Bet Valuation (+$20)
+        Server-->>Leaderboard: Update Jack's Portfolio Value
+        Leaderboard-->>All Users: Jack's Rank Updated
+    end
+    Kate->>Server: "Risky gamble there, Jack"
+    Server-->>Jack: Update Chat Room ("Risky gamble there, Jack")
+    Server-->>Charlie: Update Chat Room ("Risky gamble there, Jack")
 ```
 
 ### Key features
 
-- Describe your key feature
-- Describe your key feature
-- Describe your key feature
+- Secure login over HTTPS
+- View current portfolio valuation (preset is $1000 USD in cash)
+- Search and select a stock to view
+- Upon viewing a stock, enter a chat room
+- Send messages viewable by users within a chat room in real time
+- Upon viewing a stock, purchase a "Higher" or "Lower" bet using their funds using a modal
+- User can view the live valuation of a current bet (based on the degree of movement of the underlying security) under the line chart
+- User may close their bet for a profit or loss
+- A leaderboard page where all user portfolios are ranked in real time
+- Persistent storage of portfolio values
 
 ### Technologies
 
 I am going to use the required technologies in the following ways.
 
-- **HTML** - Description here
-- **CSS** - Description here
-- **React** - Description here
-- **Service** - Description here
-- **DB/Login** - Description here
-- **WebSocket** - Description here
+- **HTML** - Correct HTML usage to create 5 pages:
+    - For login,
+    - For viewing personal portfolios,
+    - For browsing through stocks,
+    - For viewing the stock line chart and chat room (stock chart on top half, chat on bottom)
+    - For purchasing and selling bets (modal)
+- **CSS** - Consistent formatting, modularization of CSS elements, and readable styling will produce a simple yet clean and intuitive layout.
+- **React** - Login form, viewing current portfolio, browsing and selecting a stock, rendering stock line chart and chat room, rendering bet purchase/sell modal, viewing leaderboard
+- **Service** - Endpoints include:
+    - Login authentication
+    - Portfolio retrieval
+    - Purchasing bets
+    - Selling bets
+    - Viewing live bet status
+    - Stock data retrieval
+    - Chat and chat messages 
+- **DB/Login** - Register and login users; store bets; store leaderboard data
+- **WebSocket** - Enable live chat, leaderboard rankings, and market data + bet valuations (using an API such as Polygon.io)
 
 ## 🚀 AWS deliverable
 
