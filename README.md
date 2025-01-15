@@ -36,7 +36,7 @@ How much money can you make (or lose) by timing the market compared to time in t
 ![Design image](wallStreetBetPlacedUI.png)
 ![Design image](wallstreetLeaderboardUI.png)
 
-This sequence diagram demonstrates how a bet is placed and broadcasted to the chat room and updated on the leaderboard, as well as a chat room message.
+This sequence diagram demonstrates how a bet is placed and broadcasted to the chat room then updated on the leaderboard. It also shows how a chat message is broadcasted.
 
 ```mermaid
 sequenceDiagram
