@@ -30,7 +30,11 @@ How much money can you make (or lose) by timing the market compared to time in t
 
 ### Design
 
-![Design image](placeholder.png)
+![Design image](wallstreetLoginUI.png)
+![Design image](wallsteetPortfolioUI.png)
+![Design image](wallStreetPlaceBetUI.png)
+![Design image](wallStreetBetPlacedUI.png)
+![Design image](wallStreetPlaceBetUI.png)
 
 This sequence diagram demonstrates how a bet is placed and broadcasted to the chat room and updated on the leaderboard, as well as a chat room message.
 
