@@ -18,11 +18,11 @@ Wall Street Casino is a simple web based application for betting on live stock m
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [X] Proper use of Markdown
-- [X] A concise and compelling elevator pitch
-- [X] Description of key features
-- [X] Description of how you will use each technology
-- [X] One or more rough sketches of your application. Images must be embedded in this file using Markdown image references.
+- [X] Proper use of Markdown - Followed format in example.
+- [X] A concise and compelling elevator pitch - Described the exciting social and live aspects of the app.
+- [X] Description of key features - Described chat rooms, placing bets, viewing leaderboard, etc.
+- [X] Description of how you will use each technology - Explained React compenents for the UI, backend services for handling portfolio and bet data, websockets for chat and market updates.
+- [X] One or more rough sketches of your application. Images must be embedded in this file using Markdown image references. - Used Ninjamock.io for a simple mockup.
 
 ### Elevator pitch
 
@@ -30,9 +30,13 @@ How much money can you make (or lose) by timing the market compared to time in t
 
 ### Design
 
-![Design image](placeholder.png)
+![Design image](wallstreetLoginUI.png)
+![Design image](wallsteetPortfolioUI.png)
+![Design image](wallStreetPlaceBetUI.png)
+![Design image](wallStreetBetPlacedUI.png)
+![Design image](wallstreetLeaderboardUI.png)
 
-This sequence diagram demonstrates how a bet is placed and broadcasted to the chat room and updated on the leaderboard, as well as a chat room message.
+This sequence diagram demonstrates how a bet is placed and broadcasted to the chat room then updated on the leaderboard. It also shows how a chat message is broadcasted.
 
 ```mermaid
 sequenceDiagram
