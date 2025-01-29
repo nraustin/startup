@@ -96,22 +96,21 @@ I am going to use the required technologies in the following ways.
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Server deployed and accessible with custom domain name** - [My server link](https://yourdomainnamehere.click).
+- [X] **Server deployed and accessible with custom domain name** - [My server link](https://wallstreetcasino.click).
 
 ## 🚀 HTML deliverable
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **HTML pages** - I did not complete this part of the deliverable.
-- [ ] **Proper HTML element usage** - I did not complete this part of the deliverable.
-- [ ] **Links** - I did not complete this part of the deliverable.
-- [ ] **Text** - I did not complete this part of the deliverable.
-- [ ] **3rd party API placeholder** - I did not complete this part of the deliverable.
-- [ ] **Images** - I did not complete this part of the deliverable.
-- [ ] **Login placeholder** - I did not complete this part of the deliverable.
-- [ ] **DB data placeholder** - I did not complete this part of the deliverable.
-- [ ] **WebSocket placeholder** - I did not complete this part of the deliverable.
-
+- [X] **HTML pages** - Structured 4 base pages for portfolios, stock charts, leaderboard, and home/login page.
+- [X] **Proper HTML element usage** - Used proper HTML conventions to organize elements semantically.
+- [X] **Links** - Links to each page are avalaible on the top navigation dashboard.
+- [X] **Text** - Included in all areas of the application.
+- [X] **3rd party API placeholder** - Stock chart references Polygon.io; stock query with search button will also incorporate this API.
+- [X] **Images** - Stock analysis placeholder chart included on stock page.
+- [X] **Login placeholder** - Complete with password input and login + signup buttons.
+- [X] **DB data placeholder** - Portfolio values, chat messages, and bet valuations all represent persistently stored data.
+- [X] **WebSocket placeholder** - Live security daily performance data, chat messages, and stock symbol queries imply real-time updates.
 ## 🚀 CSS deliverable
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
