@@ -1,12 +1,38 @@
 <!DOCTYPE html>
-<body>
-    <main>
-        <h2>
-            Wall Street Casino
-        </h2>
-        <div class="login-container">
-            <label for="username">Username</label>
-            <input type="text" id="username" placeholder="Password" required>
-        </div>
-    </main>
-</body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <!-- Tell browsers not to scale the viewport automatically -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simon HTML</title>
+    <link rel="icon" href="favicon.ico" />
+  </head>
+    <body>
+        <header>
+            <h1>Wall Street Casino</h1>
+            <nav>
+                <ul>
+                    <a href="index.html">Home</a> |
+                    <a href="stock.html">View Stock</a> |
+                    <a href="portfolio.html">Portfolio</a> |
+                    <a href="leaderboard.html">Leaderboard</a> 
+                </ul>
+            </nav>
+        </header>  
+        <main>
+            <h3>
+                Can you time the market?
+            </h3>
+            <div class="login-container">
+                <div class="username-container">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+                <div class="password-container">
+                    <label for="password">Password</label>
+                    <input type="text" id="password" placeholder="Password" required>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
