@@ -40,11 +40,40 @@ html, body {
     padding-top: 10px;
 }
 
-.login-form-button{
+.login-form-button {
     border: none;
-    background-color: rgb(250, 114, 46);
+    background-color: rgb(253, 140, 84);
     border-radius: 2px;
     width: 100px;
+}
+
+.main-portfolio {
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    color: white;
+}
+
+
+.stockquery-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    color: white;
+}
+
+.stockquery-button{
+    border: none;
+    background-color: rgb(253, 140, 84);
+    border-radius: 2px;
 }
 
 .navbar {

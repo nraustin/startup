@@ -22,17 +22,18 @@
                     <li><a href="leaderboard.html">Leaderboard</a></li>     
                 </ul>
             </nav>
-            <h2>Hi, Demo.</h2>
         </header>
-        <main>
+        <main class="main-portfolio">
             <div class="portfolio-container">
+                <h2 class="portfolio-welcome-msg">Hi, Demo.</h2>
                 <p>Portfolio value: <strong>$<span id="portfolio-value">1000</span> USD</strong></p>
             </div>
             <div class="stockquery-container">
                 <label for="stock-symbol">Find a stock</label>
-                <br>
-                <input type="text" id="stock-symbol" placeholder="NVDA">
-                <button type="submit">Search</button>
+                <div class="stockquery">
+                    <input type="text" id="stock-symbol" placeholder="NVDA">
+                    <button type="submit" class="stockquery-button">Search</button>
+                </div>
             </div>
         </main>
         <footer>
