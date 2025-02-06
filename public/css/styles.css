@@ -107,7 +107,11 @@ main {
     display: flex;
     flex-direction: column;
     width: 56%;
-    max-width: 800px;
+}
+
+.stock-img{
+    height: auto;
+    width: 100%;
 }
 
 .bet-options-container {
@@ -153,7 +157,7 @@ main {
     justify-content: center;
     gap: 5px;
     padding-top: 20px;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 }
 .chatbox-send-msg {
     padding: 10px;
@@ -216,7 +220,7 @@ footer {
     display: flex;
     justify-content: center;
     gap: 10px;
-    padding: 15px;
+    padding: 10px;
     /* position: fixed; */
     bottom: 0;
     width: 100%;
