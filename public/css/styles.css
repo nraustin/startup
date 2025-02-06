@@ -48,8 +48,7 @@ main {
 
 .login-form-button-container{
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    gap: 10px;
     padding-top: 10px;
 }
 
@@ -57,7 +56,13 @@ main {
     border: none;
     background-color: rgb(253, 140, 84);
     border-radius: 2px;
-    width: 100px;
+    width: 80px;
+}
+
+#username, #password, #stock-symbol {
+    border: none;
+    border-radius: 2px 2px 2px 2px;
+    padding: 4px;
 }
 
 .main-portfolio {
