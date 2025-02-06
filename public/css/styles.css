@@ -1,7 +1,13 @@
 html, body {
     background-color: #49796B;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
+main {
+    flex: 1;
+}
 
 .app-header-title {
     padding-left: 10px;
@@ -60,7 +66,6 @@ html, body {
     color: white;
 }
 
-
 .stockquery-container {
     display: flex;
     flex-direction: column;
@@ -71,6 +76,85 @@ html, body {
 }
 
 .stockquery-button{
+    border: none;
+    background-color: rgb(253, 140, 84);
+    border-radius: 2px;
+}
+
+.stockchart-and-bet-container {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.stockchart-and-bet-container > * {
+    background-color: #ECDFCC;
+    border-radius: 3px;
+    box-shadow: 0px 4px 8px rgba(0,0,0, .2);
+    padding: 10px;
+}
+
+.stockchart-container {
+    display: flex;
+    flex-direction: column;
+    width: 56%;
+    max-width: 800px;
+}
+
+.bet-options-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 24%;
+}
+
+.bet-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.bet-button-container > * {
+    border: none;
+    background-color: rgb(253, 140, 84);
+    border-radius: 2px;
+}
+
+.chatbox-container {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.chatbox {
+    padding: 10px;
+    width: 80%;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    color: white;
+    background-color: black;
+    border-radius: 2px;
+}
+
+.chatbox-send-msg-container {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.chatbox-send-msg {
+    padding: 10px;
+    width: 80%;
+    color: white;
+}
+
+.send-msg-button {
     border: none;
     background-color: rgb(253, 140, 84);
     border-radius: 2px;
@@ -104,7 +188,7 @@ footer {
     justify-content: center;
     gap: 10px;
     padding: 10px;
-    position: fixed;
+    /* position: fixed; */
     bottom: 0;
     width: 100%;
     color: white;
@@ -125,6 +209,15 @@ footer {
     }
     .navbar {
         justify-content: center;
+    }
+
+    .stockchart-and-bet-container{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stockchart-and-bet-container > *{
+        width: 80%;
     }
 }
 

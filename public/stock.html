@@ -24,22 +24,25 @@
         </nav>
     </header>
     <main>
-      <table border="1" width="100%">
-        <tr>
-            <td width="66%" align="center">
+      <table width="100%">
+        <tr class="stockchart-and-bet-container">
+            <td class="stockchart-container">
                 <h2>NVDA (websocket through Polygon.io)</h2>
-                <img src="stockchart_placeholder260.png" alt="NVDA" width="800">
+                <!-- <img src="stockchart_placeholder260.png" alt="NVDA"> -->
             </td>
-            <td width="34%" align="center">
-                <p><button type="button">Bet higher</button> $250 USD</p>
-                <p><button type="button">Bet lower</button> $250 USD</p>
+            <td class="bet-options-container">
+                <div class="bet-button-container">
+                    <button type="button" class="bet-button">Bet higher</button> $250 USD
+                    <button type="button" class="bet-button">Bet lower</button> $250 USD
+                </div>
+                
             </td>
         </tr>
     </table>
 
-    <table border="1" width="100%">
-        <tr>
-            <td>
+    <table width="100%">
+        <tr class="chatbox-container">
+            <td class="chatbox">
                 <p><strong>Jack:</strong> Bet NVDA High</p>
                 <p><strong>Kate:</strong> Where is the ceiling here?</p>
                 <p><strong>Jack:</strong> I feed on volatility...</p>
@@ -48,12 +51,12 @@
             </td>
         </tr>
     </table>
-    <table border="1" width="100%">
-        <tr>
-            <td>
+    <table width="100%">
+        <tr class="chatbox-send-msg-container">
+            <td class="chatbox-send-msg">
                 <p><strong>Demo</strong>
-                <input type="text" placeholder="send a message (websocket)" size="50">
-                <button type="button">Send</button>
+                <input type="text" placeholder="send a message (websocket)">
+                <button type="button" class="send-msg-button">Send</button>
             </td>
         </tr>
     </table>
