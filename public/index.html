@@ -12,42 +12,42 @@
     <link rel="stylesheet" href="css/styles.css">
   </head>
     <body>
-        <header>
-            <h1>Wall Street Casino</h1>
+        <header> 
             <nav class="navbar">
                 <ul class="nav-links">
-                <li><a href="index.html">Home</a></li> |
-                <li><a href="portfolio.html">Portfolio</li></a> |
-                <li><a href="stock.html">View Stock</li></a> |
-                <li><a href="leaderboard.html">Leaderboard</a></li>     
+                    <h3 class="app-header-title">Wall Street Casino</h3>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="portfolio.html">Portfolio</li></a>
+                    <li><a href="stock.html">View Stock</li></a>
+                    <li><a href="leaderboard.html">Leaderboard</a></li>     
                 </ul>
             </nav>
-            <hr />
         </header>  
-        <main>
-            <h3>
-                Can you time the market?
-            </h3>
+        <main class="main-home">
             <div class="login-container">
+            <h4>
+                Can you time the market?
+            </h4>
                 <div class="username-container">
-                    <label for="username">Username</label>
+                    <label for="username"></label>
                     <input type="text" id="username" placeholder="Username" required>
                 </div>
                 <div class="password-container">
-                    <label for="password">Password</label>
+                    <label for="password"></label>
                     <input type="password" id="password" placeholder="Password" required>
                 </div>
+            <div class="login-form-button-container">
+                <button type="button" class="login-form-button">Login</button>
+                <button type="button" class="login-form-button">Sign up</button>
             </div>
-            <div class="button-container">
-                <button type="button">Login</button>
-                <button type="button">Sign up</button>
             </div>
         </main>
         <footer>
-            <hr />
             <span class="text-reset">Nick Austin</span>
             <br />
-            <a href="https://github.com/nraustin/startup">GitHub</a>
-          </footer>
+            <a href="https://github.com/nraustin/startup">
+                <img src="github.png" alt="Github" class="github-logo">
+            </a>
+        </footer>
     </body>
 </html>
