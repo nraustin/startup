@@ -9,13 +9,13 @@ export function Authenticated(props) {
     function logout() {
         localStorage.removeItem('username');
         props.onLogout();
-        navigate('/login')
+        navigate('/')
     }
 
     return (
-        <div className="authenticated-container"> 
+        <> 
             <Portfolio username={props.username} />
             <button type="submit" className = "logout-button" onClick={logout}>Logout</button>
-        </div>
+        </>
     )
 }
