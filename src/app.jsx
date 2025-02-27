@@ -4,60 +4,42 @@ import './styles.css';
 
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import { Login } from './login/login';
+import { AuthState } from './login/authState';
 import { Portfolio } from './portfolio/portfolio';
 import { Stock } from './stock/stock';
 import { Leaderboard } from './leaderboard/leaderboard';
 
 export default function App() {
+  const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
+  const currentAuthState = userName ? AuthState.Authenticated : AuthState.Unauthenticated;
+  const [authState, setAuthState] = React.useState(currentAuthState);  
+
   return (
     <BrowserRouter>
     <div>
-        {/* <div className="body bg-dark text-light">
-        <header className="container-fluid">
-            <nav className="navbar fixed-top navbar-dark">
-            <div className="navbar-brand">
-                Simon<sup>&reg;</sup>
-            </div>
-            <menu className="navbar-nav">
-                <li className="nav-item">
-                <NavLink className="nav-link" to="">
-                    Login
-                </NavLink>
-                </li>
-                <li className="nav-item">
-                <NavLink className="nav-link" to="play">
-                    Play
-                </NavLink>
-                </li>
-                <li className="nav-item">
-                <NavLink className="nav-link" to="scores">
-                    Scores
-                </NavLink>
-                </li>
-                <li className="nav-item">
-                <NavLink className="nav-link" to="about">
-                    About
-                </NavLink>
-                </li>
-            </menu>
-            </nav>
-        </header> */}
-
         <header> 
             <nav className="navbar">
                 <ul className="nav-links">
                     <h3 className="app-header-title">Wall Street Casino</h3>
                     <li><NavLink to="">Home</NavLink></li>
-                    <li><NavLink to="portfolio">Portfolio</NavLink></li>
-                    <li><NavLink to="stock">View Stock</NavLink></li>
-                    <li><NavLink to="leaderboard">Leaderboard</ NavLink></li>     
+                    {authState === AuthState.Authenticated && (<li><NavLink to="portfolio">Portfolio</NavLink></li>)}
+                    {authState === AuthState.Authenticated && (<li><NavLink to="stock">View Stock</NavLink></li>)}
+                    {authState === AuthState.Authenticated && (<li><NavLink to="leaderboard">Leaderboard</ NavLink></li>)}     
                 </ul>
             </nav>
         </header> 
 
         <Routes>
-            <Route path='/' element={<Login />} exact />
-            <Route path='/portfolio' element={<Portfolio />} />
+            <Route path='/' 
+                   element=
+                   {<Login 
+                        userName={userName}
+                        authState={authState}
+                        onAuthChange={(userName, authState) => {
+                            setAuthState(authState);
+                            setUserName(userName);
+                        }} /> } exact />
+            <Route path='/portfolio' element={<Portfolio username={userName}/>} />
             <Route path='/stock' element={<Stock />} />
             <Route path='/leaderboard' element={<Leaderboard />} />
             <Route path='*' element={<NotFound />} />
