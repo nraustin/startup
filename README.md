@@ -126,9 +126,9 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Bundled using Vite** - I did not complete this part of the deliverable.
-- [ ] **Components** - I did not complete this part of the deliverable.
-- [ ] **Router** - Routing between login and voting components.
+- [X] **Bundled using Vite** - Vite installed; bundles performed via Vite through dependency imports.
+- [X] **Components** - Components for main App, Login, Stock, Leaderboard, and Portfolio defined and implemented. 
+- [X] **Router** - Routing enables linkage between aforementioned components through React Router.
 
 ## 🚀 React part 2: Reactivity
 
