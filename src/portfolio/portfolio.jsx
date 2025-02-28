@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 export function Portfolio({username}) {
   const [stockSymbol, setStockSymbol] = useState('');
-
+  
   function handleStockSearch() {
     console.log(`Searching for ${stockSymbol}`);
   }

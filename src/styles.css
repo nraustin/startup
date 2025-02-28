@@ -119,21 +119,23 @@ main {
     width: 100%;
 }
 
-.bet-options-container {
+.bet-options-container, .bet-placed-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     width: 24%;
 }
 
 .bet-button-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 10px;
+    padding: 10px;
 }
 
-.bet-button-container > * {
+.bet-button, .close-bet-button {
     border: none;
     background-color: rgb(253, 140, 84);
     border-radius: 2px;
