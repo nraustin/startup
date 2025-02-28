@@ -1,21 +1,63 @@
 import React from 'react';
 
+import { BetPlaced } from './betPlaced';
+import { BetOptions } from './betOptions';
+import { useState, useEffect } from 'react';
+
 export function Stock() {
+  const [bet, setBet] = useState('');
+  const [stockPrice, setStockPrice] = useState(100);
+  const [higherBetValue, setHigherBetValue] = useState(250);
+  const [lowerBetValue, setLowerBetValue] = useState(250);
+
+  const MIN_PRICE = 90;
+  const MAX_PRICE = 110;
+  const BET_CHG_PERCENT = .1;
+
+  useEffect(() => {
+    const interval = setInterval(() =>{
+      setStockPrice((prevPrice) => {
+        let chg = Math.random() < .5 ? -1 : 1;
+        let newPrice = prevPrice+  chg;
+
+        if (newPrice < MIN_PRICE || newPrice > MAX_PRICE){
+          return prevPrice;
+        }
+
+        if (chg === 1) {
+          setHigherBetValue((prev) => prev*(1 + BET_CHG_PERCENT));
+          setLowerBetValue((prev) => prev*(1 - BET_CHG_PERCENT));
+        } 
+        else {
+          setHigherBetValue((prev) => prev*(1 - BET_CHG_PERCENT));
+          setLowerBetValue((prev) => prev*(1 + BET_CHG_PERCENT));
+        }
+          return newPrice;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  function placeBet(betType) {
+    setBet(betType);
+  }
+
+  function closeBet() {
+    setBet('');
+  }
+
   return (
     <main>
       <table width="100%">
         <tbody>
           <tr className="stockchart-and-bet-container">
             <td className="stockchart-container">
-              <h2>NVDA (websocket through Polygon.io)</h2>
+              <h2>NVDA Mock live price: ${stockPrice.toFixed(2)} USD</h2>
               <img src="stockchart_placeholder260.png" className="stock-img" alt="NVDA" />
             </td>
-            <td className="bet-options-container">
-              <div className="bet-button-container">
-                <button type="button" className="bet-button">Bet higher</button> $250 USD
-                <button type="button" className="bet-button">Bet lower</button> $250 USD
-              </div>
-            </td>
+            {!bet && <BetOptions placeBet={placeBet} higherBetValue={higherBetValue} lowerBetValue={lowerBetValue}/>}
+            {bet && <BetPlaced betType={bet} betAmount={bet === "higher" ? higherBetValue : lowerBetValue} closeBet={closeBet}/>}
           </tr>
         </tbody>
       </table>
