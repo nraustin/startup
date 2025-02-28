@@ -4,6 +4,7 @@ import { BetPlaced } from './betPlaced';
 import { BetOptions } from './betOptions';
 import { useState, useEffect } from 'react';
 import { Chatroom } from './chatroom';
+import { StockChart } from './stockChart';
 
 export function Stock({ userName, portfolioValue, setPortfolioValue}) {
   const [bet, setBet] = useState(localStorage.getItem('bet') || '');
@@ -83,7 +84,7 @@ export function Stock({ userName, portfolioValue, setPortfolioValue}) {
           <tr className="stockchart-and-bet-container">
             <td className="stockchart-container">
               <h2>Mock {stockSymbol} stock live price: ${stockPrice.toFixed(2)} USD</h2>
-              <img src="stockchart_placeholder260.png" className="stock-img" alt="NVDA" />
+              <StockChart stockSymbol={stockSymbol}/>
             </td>
             {!bet && <BetOptions placeBet={placeBet} higherBetValue={higherBetValue} lowerBetValue={lowerBetValue}/>}
             {bet && <BetPlaced betType={bet} betAmount={bet === "higher" ? higherBetValue : lowerBetValue} closeBet={closeBet}/>}
