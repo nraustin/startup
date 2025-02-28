@@ -10,7 +10,6 @@ export function Login({ userName, portfolioValue, authState, onAuthChange}) {
     <>
       {authState === AuthState.Authenticated && (
         <Authenticated userName={userName} portfolioValue={portfolioValue} />
-        // <Authenticated userName={userName} portfolioValue={portfolioValue} onLogout={() => onAuthChange(userName, AuthState.Unauthenticated)} />
       )}
       {authState === AuthState.Unauthenticated && (
         <Unauthenticated userName={userName} onLogin={(loginUserName) => {onAuthChange(loginUserName, AuthState.Authenticated)}}/>
