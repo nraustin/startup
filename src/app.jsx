@@ -58,7 +58,7 @@ export default function App() {
                             setUserName(userName);
                         }} /> } exact />
             <Route path='/portfolio' element={<Portfolio username={userName} portfolioValue={portfolioValue}/>} />
-            <Route path='/stock' element={<Stock portfolioValue={portfolioValue} setPortfolioValue={setPortfolioValue}/>} />
+            <Route path='/stock' element={<Stock userName={userName} portfolioValue={portfolioValue} setPortfolioValue={setPortfolioValue}/>} />
             <Route path='/leaderboard' element={<Leaderboard />} />
             <Route path='*' element={<NotFound />} />
         </Routes>

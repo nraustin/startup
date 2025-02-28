@@ -1,15 +1,20 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export function Portfolio({ username, portfolioValue  }) {
   const [stockSymbol, setStockSymbol] = useState('');
+  const navigate = useNavigate()
 
   React.useEffect(() => {
     localStorage.setItem('portfolioValue', portfolioValue);
   }, [portfolioValue]);
 
   function handleStockSearch() {
-    console.log(`Searching for ${stockSymbol}`);
+    if (stockSymbol.trim()) {
+      localStorage.setItem('selectedStock', stockSymbol.toUpperCase());
+      navigate('/stock');
+    }
   }
 
   return (
