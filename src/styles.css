@@ -52,7 +52,7 @@ main {
     padding-top: 10px;
 }
 
-.login-form-button {
+.login-form-button, .logout-button {
     border: none;
     background-color: rgb(253, 140, 84);
     border-radius: 2px;
