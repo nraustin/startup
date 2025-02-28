@@ -134,8 +134,8 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **All functionality implemented or mocked out** - I did not complete this part of the deliverable.
-- [ ] **Hooks** - I did not complete this part of the deliverable.
+- [X] **All functionality implemented or mocked out** - Mock stock symbol queries, live stock price and bet valuation updates, websocket chat messages, leaderboard live rankings.
+- [X] **Hooks** - useEffect, useState, and useNavigate for almost every component.
 
 ## 🚀 Service deliverable
 
