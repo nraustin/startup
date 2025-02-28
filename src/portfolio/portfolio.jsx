@@ -1,9 +1,13 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export function Portfolio({username}) {
+export function Portfolio({ username, portfolioValue  }) {
   const [stockSymbol, setStockSymbol] = useState('');
-  
+
+  React.useEffect(() => {
+    localStorage.setItem('portfolioValue', portfolioValue);
+  }, [portfolioValue]);
+
   function handleStockSearch() {
     console.log(`Searching for ${stockSymbol}`);
   }
@@ -13,7 +17,7 @@ export function Portfolio({username}) {
       <div className="portfolio-container">
         <h2 className="portfolio-welcome-msg">Hi, {username}.</h2>
         <p>
-          Portfolio value: <strong>$<span id="portfolio-value">1000</span> USD</strong>
+          Portfolio value: <strong>${portfolioValue.toFixed(2)} USD</strong>
         </p>
       </div>
 

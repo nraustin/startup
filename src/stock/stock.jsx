@@ -4,11 +4,11 @@ import { BetPlaced } from './betPlaced';
 import { BetOptions } from './betOptions';
 import { useState, useEffect } from 'react';
 
-export function Stock() {
-  const [bet, setBet] = useState('');
-  const [stockPrice, setStockPrice] = useState(100);
-  const [higherBetValue, setHigherBetValue] = useState(250);
-  const [lowerBetValue, setLowerBetValue] = useState(250);
+export function Stock({portfolioValue, setPortfolioValue}) {
+  const [bet, setBet] = useState(localStorage.getItem('bet') || '');
+  const [stockPrice, setStockPrice] = useState(parseFloat(localStorage.getItem('stockPrice')) || 100);
+  const [higherBetValue, setHigherBetValue] = useState(parseFloat(localStorage.getItem('higherBetValue')) || 250);
+  const [lowerBetValue, setLowerBetValue] = useState(parseFloat(localStorage.getItem('lowerBetValue')) || 250);
 
   const MIN_PRICE = 90;
   const MAX_PRICE = 110;
@@ -32,6 +32,7 @@ export function Stock() {
           setHigherBetValue((prev) => prev*(1 - BET_CHG_PERCENT));
           setLowerBetValue((prev) => prev*(1 + BET_CHG_PERCENT));
         }
+          localStorage.setItem('stockPrice', newPrice);
           return newPrice;
       });
     }, 1000);
@@ -41,10 +42,18 @@ export function Stock() {
 
   function placeBet(betType) {
     setBet(betType);
+    localStorage.setItem('bet', betType)
   }
 
   function closeBet() {
+    const betValue = bet === "higher" ? higherBetValue : lowerBetValue;
+    setPortfolioValue((prev) => {
+      const newPortfolioValue = prev + (betValue - 250);
+      localStorage.setItem('portfolioValue', newPortfolioValue)
+      return newPortfolioValue;
+    });
     setBet('');
+    localStorage.removeItem('bet')
   }
 
   return (

@@ -1,6 +1,34 @@
 import React from 'react';
+import { useState } from 'react';
 
 export function Leaderboard() {
+    const [users, setUsers] = useState([]);
+
+    const fetchLeaderboard = () => {
+        const userName = localStorage.getItem('userName'); 
+        let usersData = localStorage.getItem('users');
+        usersData = JSON.parse(usersData)
+
+        const storedPortfolio = usersData[userName] || 1000;
+    
+        const placeholderUsers = [
+          { username: "Jack", portfolioValue: Math.floor(Math.random()*5000) + 500},
+          { username: "Kate", portfolioValue: Math.floor(Math.random()*5000) + 500},
+          { username: "Sawyer", portfolioValue: Math.floor(Math.random()*5000) + 500},
+        ];
+    
+        const allUsers = [...placeholderUsers, { username: userName , portfolioValue: storedPortfolio }];
+        const sortedUsers = allUsers.sort((a, b) => b.portfolioValue - a.portfolioValue);
+    
+        setUsers(sortedUsers);
+      };
+
+      React.useEffect(() => {
+        fetchLeaderboard();
+        const interval = setInterval(fetchLeaderboard, 1000);
+        return () => clearInterval(interval);
+      }, []);
+
     return (
         <main class="main-leaderboard">
         <h2 class="leaderboard-title">Leaderboard</h2>
@@ -13,36 +41,13 @@ export function Leaderboard() {
              </tr>
          </thead>
          <tbody>
-             <tr>
-                 <td>1</td>
-                 <td>$23900</td>
-                 <td>Charlie</td>
-             </tr>
-             <tr>
-                 <td>2</td>
-                 <td>$13003</td>
-                 <td>Kate</td>
-             </tr>
-             <tr>
-                 <td>3</td>
-                 <td>$8710</td>
-                 <td>Jack</td>
-             </tr>
-             <tr>
-                 <td>4</td>
-                 <td>$2000</td>
-                 <td>Michaelangelo</td>
-             </tr>
-             <tr>
-                 <td>5</td>
-                 <td>$1000</td>
-                 <td>Demo</td>
-             </tr>
-             <tr>
-                 <td>6</td>
-                 <td>$7</td>
-                 <td>Leonardo</td>
-             </tr>
+             {users.map((users, i) => (
+                <tr key={users.userName}>
+                    <td>{i+1}</td>
+                    <td>{users.username}</td>
+                    <td>${users.portfolioValue.toFixed(2)}</td>
+                </tr>
+             ))}
          </tbody>
         </table>
      </main>
