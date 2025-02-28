@@ -17,7 +17,7 @@ export function Stock({ userName, portfolioValue, setPortfolioValue}) {
   const MIN_PRICE = 90;
   const MAX_PRICE = 110;
   const BET_CHG_PERCENT = .1;
-  const MIN_BET_VALUE = 1;
+  const MIN_BET_VALUE = 50;
 
   useEffect(() => {
     const interval = setInterval(() =>{
