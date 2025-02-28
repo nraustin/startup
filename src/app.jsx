@@ -28,7 +28,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-    <div>
+    <div className='app-container'>
         <header> 
             <nav className="navbar">
                 <ul className="nav-links">
