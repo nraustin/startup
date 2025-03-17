@@ -86,9 +86,40 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 0px;
     color: white;
 }
+
+.stockquery {
+    
+}
+
+.stockquery-field {
+    padding-top: 10px;
+    display: flex;
+    justify-content: center;
+    width: 500px;
+}
+
+.stock-suggestions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    background: black;
+    scrollbar-width: none;
+  }
+  
+  .stock-suggestions li {
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  .stock-suggestions li:hover {
+    background: green;
+  }
 
 .stockquery-button{
     border: none;
