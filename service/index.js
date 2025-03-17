@@ -3,8 +3,10 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
+require('dotenv').config();
 
 const authCookieName = 'token';
+const POLYGON_API_KEY = process.env.POLYGON_API_KEY; 
 
 let users = [];
 let porfolioValues = [];
@@ -50,6 +52,25 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   }
   res.clearCookie(authCookieName);
   res.status(204).end();
+});
+
+apiRouter.get('/stocks', async (req, res) => {
+  const { query } = req.query;
+  if (!query) {
+    return res.status(400).json({ error: "Missing stock query" });
+  }
+  try {
+    const response = await fetch(`https://api.polygon.io/v3/reference/tickers?search=${query}&active=true&limit=10&apiKey=${POLYGON_API_KEY}`);
+    if (!response.ok) {
+      throw new Error(`Polygon API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    res.json(data.results || []);
+  } catch (err) {
+    console.error("Error fetching stock data:", err.message);
+    res.status(500).json({ err: "Error retrieving stock data" });
+  }
 });
 
 
