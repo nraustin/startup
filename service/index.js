@@ -20,25 +20,36 @@ app.use(express.static('public'));
 var apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
+// Middleware to verify that the user is authorized to call an endpoint
+const verifyAuth = async (req, res, next) => {
+  const user = await findUser('token', req.cookies[authCookieName]);
+  if (user) {
+    req.user = user;
+    next();
+  } else {
+    res.status(401).send({ msg: 'Unauthorized' });
+  }
+};
+
 apiRouter.post('/auth/create', async (req, res) => {
-  if (await findUser('email', req.body.email)) {
+  if (await findUser('username', req.body.username)) {
     console.log("in auth/create")
     res.status(409).send({ msg: 'Existing user' });
   } else {
-    const user = await createUser(req.body.email, req.body.password);
+    const user = await createUser(req.body.username, req.body.password);
 
     setAuthCookie(res, user.token);
-    res.send({ email: user.email });
+    res.send({ username: user.username });
   }
 });
 
 apiRouter.post('/auth/login', async (req, res) => {
-  const user = await findUser('email', req.body.email);
+  const user = await findUser('username', req.body.username);
   if (user) {
     if (await bcrypt.compare(req.body.password, user.password)) {
       user.token = uuid.v4();
       setAuthCookie(res, user.token);
-      res.send({ email: user.email });
+      res.send({ username: user.username });
       return;
     }
   }
@@ -54,7 +65,7 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   res.status(204).end();
 });
 
-apiRouter.get('/stocks', async (req, res) => {
+apiRouter.get('/stocks', verifyAuth, async (req, res) => {
   const { query } = req.query;
   if (!query) {
     return res.status(400).json({ error: "Missing stock query" });
@@ -73,7 +84,7 @@ apiRouter.get('/stocks', async (req, res) => {
   }
 });
 
-apiRouter.get('/stocks/stock-data', async (req, res) => {
+apiRouter.get('/stocks/stock-data', verifyAuth, async (req, res) => {
   const { symbol, timeframe } = req.query;
   if (!symbol || !timeframe) {
       return res.status(400).json({err: "Missing stock symbol or timeframe"});
@@ -135,12 +146,19 @@ let tempUsers = {
   "Sawyer": {username: "Sawyer", portfolioValue: Math.floor(Math.random()*5000) + 500}
 }
 
-apiRouter.get('/leaderboard', (req, res) => {
+apiRouter.get('/leaderboard', verifyAuth, (req, res) => {
+  const {username, portfolioValue} = req.user;
+
+  // if bet not placed
+  if (!tempUsers[username]){
+    tempUsers[username] = {username, portfolioValue: portfolioValue}
+  }
+
   const rankedUsers = Object.values(tempUsers).sort((a, b) => b.portfolioValue - a.portfolioValue);
   res.json(rankedUsers);
 });
 
-apiRouter.post('/update-portfolio', (req, res) => {
+apiRouter.post('/update-portfolio', verifyAuth, (req, res) => {
   const {username, portfolioValue} = req.body;
   if (!username || portfolioValue === undefined) {
       return res.status(400).json({error: "Invalid request data"});
@@ -167,13 +185,14 @@ function setAuthCookie(res, authToken) {
   });
 }
 
-async function createUser(email, password) {
+async function createUser(username, password) {
   const passwordHash = await bcrypt.hash(password, 10);
 
   const user = {
-    email: email,
+    username: username,
     password: passwordHash,
     token: uuid.v4(),
+    portfolioValue: 1000,
   };
   users.push(user);
 

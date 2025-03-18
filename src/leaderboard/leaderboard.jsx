@@ -29,7 +29,7 @@ export function Leaderboard() {
          </thead>
          <tbody>
              {users.map((users, i) => (
-                <tr key={users.userName}>
+                <tr key={users.username}>
                     <td>{i+1}</td>
                     <td>{users.username}</td>
                     <td>${users.portfolioValue.toFixed(2)}</td>
