@@ -71,11 +71,10 @@ export function StockChart({stockSymbol, mockStockPrice}) {
 
             <ResponsiveContainer width="100%" height={400}>
                 <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
                     <YAxis domain={["auto", "auto"]} />
                     <Tooltip />
-                    <Line type="monotone" dataKey="price" stroke="#82ca9d" />
+                    <Line type="monotone" dataKey="price" stroke="#82ca9d" dot={false}/>
                 </LineChart>
             </ResponsiveContainer>
         </div>

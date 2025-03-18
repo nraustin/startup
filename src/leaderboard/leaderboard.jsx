@@ -1,33 +1,20 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function Leaderboard() {
     const [users, setUsers] = useState([]);
 
-    const fetchLeaderboard = () => {
-        const userName = localStorage.getItem('userName'); 
-        let usersData = localStorage.getItem('users');
-        usersData = JSON.parse(usersData)
+    async function fetchLeaderboard() {
+        const response = await fetch('/api/leaderboard');
+        const data = await response.json();
+        setUsers(data);
+    }
 
-        const storedPortfolio = usersData[userName] || 1000;
-    
-        const placeholderUsers = [
-          { username: "Jack", portfolioValue: Math.floor(Math.random()*5000) + 500},
-          { username: "Kate", portfolioValue: Math.floor(Math.random()*5000) + 500},
-          { username: "Sawyer", portfolioValue: Math.floor(Math.random()*5000) + 500},
-        ];
-    
-        const allUsers = [...placeholderUsers, { username: userName , portfolioValue: storedPortfolio }];
-        const sortedUsers = allUsers.sort((a, b) => b.portfolioValue - a.portfolioValue);
-    
-        setUsers(sortedUsers);
-      };
-
-      React.useEffect(() => {
+    useEffect(() => {
         fetchLeaderboard();
-        const interval = setInterval(fetchLeaderboard, 1000);
+        const interval = setInterval(fetchLeaderboard, 2000);
         return () => clearInterval(interval);
-      }, []);
+    }, []);
 
     return (
         <main class="main-leaderboard">

@@ -49,6 +49,16 @@ export function Stock({ userName, portfolioValue, setPortfolioValue}) {
     return () => clearInterval(interval);
   }, []);
 
+  async function updatePortfolio(newPortfolioValue) {
+    localStorage.setItem("portfolioValue", newPortfolioValue);
+    
+    await fetch(`/api/update-portfolio`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({username: userName, portfolioValue: newPortfolioValue}),
+    });
+  }
+
   function placeBet(betType) {
     setBet(betType);
     localStorage.setItem('bet', betType)
@@ -60,14 +70,13 @@ export function Stock({ userName, portfolioValue, setPortfolioValue}) {
 
   function closeBet() {
     const currentBetValue = bet === "higher" ? higherBetValue : lowerBetValue;
-    console.log(currentBetValue);
     const entryBetPrice = parseFloat(localStorage.getItem('initialBetAmount')) || currentBetValue;
 
     const profit = currentBetValue - entryBetPrice;
 
     setPortfolioValue((prev) => {
       const newPortfolioValue = prev + profit;
-      localStorage.setItem('portfolioValue', newPortfolioValue);
+      updatePortfolio(newPortfolioValue)
       return newPortfolioValue;
     });
 

@@ -129,6 +129,26 @@ apiRouter.get('/stocks/stock-data', async (req, res) => {
   }
 });
 
+let tempUsers = {
+  "Jack": {username: "Jack", portfolioValue: Math.floor(Math.random()*5000) + 500},
+  "Kate": {username: "Kate", portfolioValue: Math.floor(Math.random()*5000) + 500},
+  "Sawyer": {username: "Sawyer", portfolioValue: Math.floor(Math.random()*5000) + 500}
+}
+
+apiRouter.get('/leaderboard', (req, res) => {
+  const rankedUsers = Object.values(tempUsers).sort((a, b) => b.portfolioValue - a.portfolioValue);
+  res.json(rankedUsers);
+});
+
+apiRouter.post('/update-portfolio', (req, res) => {
+  const {username, portfolioValue} = req.body;
+  if (!username || portfolioValue === undefined) {
+      return res.status(400).json({error: "Invalid request data"});
+  }
+  tempUsers[username] = {username, portfolioValue};
+  res.json({message: "Portfolio updated successfully"});
+});
+
 app.use(function (err, req, res, next) {
   res.status(500).send({ type: err.name, message: err.message });
 });
