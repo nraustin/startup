@@ -5,16 +5,19 @@ export function StockChart({stockSymbol, mockStockPrice}) {
     const [data, setData] = useState([]);
     const [timeframe, setTimeframe] = useState("5m");
     const [lastPrice, setLastPrice] = useState(null);
+    const [marketStatus, setMarketStatus] = useState('loading');
 
     useEffect(() => {
         async function fetchStockData() {
             try {
-                const response = await fetch(`/api/stock-data?symbol=${stockSymbol}&timeframe=${timeframe}`);
+                const response = await fetch(`/api/stocks/stock-data?symbol=${stockSymbol}&timeframe=${timeframe}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch stock data");
                 }
                 const result = await response.json();
-                setData(result);
+                setData(result.data);
+                setMarketStatus(result.marketStatus);
+                setLastPrice(result.price.toFixed(2));
             } catch (err) {
                 console.error("Error fetching stock data:", err);
             }
@@ -24,7 +27,7 @@ export function StockChart({stockSymbol, mockStockPrice}) {
     }, [stockSymbol, timeframe]);
  
     const setupWebSocket = useCallback(() => {
-        if (timeframe !== "5m" || !apiKey) {
+        if (timeframe !== "5m") {
             return;
         };
         const ws = new WebSocket(`wss://socket.polygon.io/stocks`);
@@ -33,7 +36,6 @@ export function StockChart({stockSymbol, mockStockPrice}) {
             console.log("WebSocket connected. Subscribing to:", stockSymbol);
             ws.send(JSON.stringify({action: "subscribe", params: `T.${stockSymbol}`}));
         };
-
         ws.onmessage = (event) => {
             const parsedData = JSON.parse(event.data);
             const tradeData = parsedData.find(item => item.ev === "T");
@@ -43,12 +45,11 @@ export function StockChart({stockSymbol, mockStockPrice}) {
                 setData(prevData => [...prevData.slice(-50), {time: new Date().toLocaleTimeString(), price: tradeData.p }]);
             }
         };
-
         ws.onerror = (err) => console.error("WebSocket error:", err);
         ws.onclose = () => console.log("WebSocket closed");
 
         return () => ws.close();
-    }, [stockSymbol, timeframe, apiKey]);
+    }, [stockSymbol, timeframe]);
 
     useEffect(() => {
         const cleanup = setupWebSocket();
@@ -57,7 +58,10 @@ export function StockChart({stockSymbol, mockStockPrice}) {
 
     return (
         <div>
-            <h3>{stockSymbol} ${mockStockPrice} USD</h3>
+            <h3>{stockSymbol} ${lastPrice} USD</h3>
+                {marketStatus.market === 'closed' && (<p>The market is currently closed. Displaying previous day's data.</p>)}
+                {marketStatus.earlyHours && (<p>Pre-market</p>)}
+                {marketStatus.afterHours && (<p>After-hours</p>)}
             <select onChange={(e) => setTimeframe(e.target.value)} value={timeframe}>
                 <option value="5m">Live: Last 5 minutes</option>
                 <option value="1d">1 Day</option>

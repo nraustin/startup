@@ -69,55 +69,65 @@ apiRouter.get('/stocks', async (req, res) => {
     res.json(data.results || []);
   } catch (err) {
     console.error("Error fetching stock data:", err.message);
-    res.status(500).json({ err: "Error retrieving stock data" });
+    res.status(500).json({err: "Error retrieving stock data"});
   }
 });
 
-apiRouter.get('/stock-data', async (req, res) => {
+apiRouter.get('/stocks/stock-data', async (req, res) => {
   const { symbol, timeframe } = req.query;
-
   if (!symbol || !timeframe) {
-      return res.status(400).json({ error: "Missing stock symbol or timeframe" });
+      return res.status(400).json({err: "Missing stock symbol or timeframe"});
   }
-
-  let timespan = "minute";
-  let multiplier = 1; 
-
-  if (timeframe === "1d") {
-      timespan = "day";
-      multiplier = 1;
-  } else if (timeframe === "1w") {
-      timespan = "day";
-      multiplier = 7;
-  } else if (timeframe === "1m") {
-      timespan = "day";
-      multiplier = 30;
-  }
-
-  const today = new Date().toISOString().split("T")[0];
-  const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/${multiplier}/${timespan}/${today}/${today}?adjusted=true&sort=asc&limit=100&apiKey=${POLYGON_API_KEY}`;
-
   try {
-      const response = await fetch(url);
-      if (!response.ok) {
-          throw new Error(`Polygon API error: ${response.statusText}`);
-      }
-      const data = await response.json();
-      if (!data.results) {
-          return res.status(404).json({ error: "No data available" });
-      }
-      const formattedData = data.results.map((entry) => ({
-          time: new Date(entry.t).toLocaleTimeString(),
-          price: entry.c,
-      }));
+      const statusResponse = await fetch(`https://api.polygon.io/v1/marketstatus/now?apiKey=${POLYGON_API_KEY}`);
+      if (!statusResponse.ok) throw new Error("Failed to fetch market status");
+      const marketStatus = await statusResponse.json();
 
-      res.json(formattedData);
+      let data = [];
+      let timespan = "minute";
+      let multiplier = 1;
+
+      if (timeframe === "1d") {
+          timespan = "day";
+      } else if (timeframe === "1w") {
+          timespan = "day";
+          multiplier = 7;
+      } else if (timeframe === "1m") {
+          timespan = "day";
+          multiplier = 30;
+      }
+
+      const today = new Date().toISOString().split("T")[0];
+      if (marketStatus.market === "closed") {
+          let yesterday = new Date();
+          yesterday.setDate(yesterday.getDate()-1);
+          const prevDate = yesterday.toISOString().split("T")[0];
+
+          const prevDayUrl = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/minute/${prevDate}/${prevDate}?adjusted=true&sort=asc&limit=1000&apiKey=${POLYGON_API_KEY}`;
+          const prevDayResponse = await fetch(prevDayUrl);
+          if (!prevDayResponse.ok) throw new Error("Failed to fetch previous day's data");
+
+          const prevDayData = await prevDayResponse.json();
+          if (prevDayData.results) {
+              data = prevDayData.results.map(entry => ({time: new Date(entry.t).toLocaleTimeString(), price: entry.c,}));
+              price = prevDayData.results[prevDayData.results.length-1].c;
+          }
+      } else {
+          const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/${multiplier}/${timespan}/${today}/${today}?adjusted=true&sort=asc&limit=100&apiKey=${POLYGON_API_KEY}`;
+          const response = await fetch(url);
+          if (!response.ok) throw new Error(`Polygon API error: ${response.statusText}`);
+
+          const result = await response.json();
+          data = result.results.map((entry) => ({time: new Date(entry.t).toLocaleTimeString(), price: entry.c,}));
+          price = result.results[result.results.length-1].c;
+      }
+      res.json({data, marketStatus, price});
+
   } catch (err) {
       console.error("Error fetching stock data:", err.message);
-      res.status(500).json({ err: "Error retrieving stock data" });
+      res.status(500).json({err: "Error retrieving stock data"});
   }
 });
-
 
 app.use(function (err, req, res, next) {
   res.status(500).send({ type: err.name, message: err.message });
