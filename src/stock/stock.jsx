@@ -83,8 +83,7 @@ export function Stock({ userName, portfolioValue, setPortfolioValue}) {
         <tbody>
           <tr className="stockchart-and-bet-container">
             <td className="stockchart-container">
-              <h2>Mock {stockSymbol} stock live price: ${stockPrice.toFixed(2)} USD</h2>
-              <StockChart stockSymbol={stockSymbol}/>
+              <StockChart stockSymbol={stockSymbol} mockStockPrice={stockPrice.toFixed(2)}/>
             </td>
             {!bet && <BetOptions placeBet={placeBet} higherBetValue={higherBetValue} lowerBetValue={lowerBetValue}/>}
             {bet && <BetPlaced betType={bet} betAmount={bet === "higher" ? higherBetValue : lowerBetValue} closeBet={closeBet}/>}
