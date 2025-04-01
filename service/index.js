@@ -15,7 +15,7 @@ const POLYGON_API_KEY = process.env.POLYGON_API_KEY;
 let users = [];
 let porfolioValues = [];
 
-const port = process.argv.length > 2 ? process.argv[2] : 3000;
+const port = process.argv.length > 2 ? process.argv[2] : 4000;
 
 app.use(express.json());
 app.use(cookieParser());
