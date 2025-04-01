@@ -1,19 +1,18 @@
-import React, { useState, useEffect, useCallback} from "react";
+import React, { useState, useEffect, useRef} from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
 export function StockChart({stockSymbol, mockStockPrice}) {
     const [data, setData] = useState([]);
-    const [timeframe, setTimeframe] = useState("5m");
+    const wsRef = useRef(null);
+    const [timeframe, setTimeframe] = useState("live");
     const [lastPrice, setLastPrice] = useState(null);
     const [marketStatus, setMarketStatus] = useState('loading');
 
     useEffect(() => {
+        if (timeframe === "live") return;
         async function fetchStockData() {
             try {
                 const response = await fetch(`/api/stocks/stock-data?symbol=${stockSymbol}&timeframe=${timeframe}`);
-                if (!response.ok) {
-                    throw new Error("Failed to fetch stock data");
-                }
                 const result = await response.json();
                 setData(result.data);
                 setMarketStatus(result.marketStatus);
@@ -22,39 +21,56 @@ export function StockChart({stockSymbol, mockStockPrice}) {
                 console.error("Error fetching stock data:", err);
             }
         }
-
+        
         fetchStockData();
     }, [stockSymbol, timeframe]);
  
-    const setupWebSocket = useCallback(() => {
-        if (timeframe !== "5m") {
-            return;
-        };
-        const ws = new WebSocket(`wss://socket.polygon.io/stocks`);
+    useEffect(() => {
+        if (timeframe !== "live") return;
+        async function preloadTodayData() {
+            try {
+              const response = await fetch(`/api/stocks/live-history?symbol=${stockSymbol}`);
+              const result = await response.json();
+              setData(result.data);
+              setLastPrice(result.price?.toFixed(2));
+            } catch (err) {
+              console.error("Error preloading day data", err);
+            }
+          }
+        
+        preloadTodayData();
+        // changed for production
+        const ws = new WebSocket("wss://startup.wallstreetcasino.click/ws"); 
+        wsRef.current = ws;
 
         ws.onopen = () => {
-            console.log("WebSocket connected. Subscribing to:", stockSymbol);
-            ws.send(JSON.stringify({action: "subscribe", params: `T.${stockSymbol}`}));
+            ws.send(JSON.stringify({type: 'subscribe', symbol: stockSymbol}));
         };
         ws.onmessage = (event) => {
-            const parsedData = JSON.parse(event.data);
-            const tradeData = parsedData.find(item => item.ev === "T");
+            const parsed = JSON.parse(event.data);
+            if (parsed.ev === "A" && parsed.sym === stockSymbol) {
+                const closePrice = parsed.c
+                const barEnd = new Date(parsed.e)
+                const formattedTime = barEnd.toLocaleTimeString(); 
 
-            if (tradeData) {
-                setLastPrice(tradeData.p);
-                setData(prevData => [...prevData.slice(-50), {time: new Date().toLocaleTimeString(), price: tradeData.p }]);
+                setData((prevData) => {
+                    const newPoint = {time: formattedTime, price: closePrice};
+                    const updated = [...prevData, newPoint];
+                    return updated;
+                });
+                setLastPrice(closePrice.toFixed(2));
             }
         };
-        ws.onerror = (err) => console.error("WebSocket error:", err);
-        ws.onclose = () => console.log("WebSocket closed");
+        ws.onerror = (err) => console.error("WS error:", err);
+        ws.onclose = () => console.log("WS closed");
 
-        return () => ws.close();
-    }, [stockSymbol, timeframe]);
+        return () => {
+            if (wsRef.current) {
+                wsRef.current.close();
+                }
+            };
+    }, [stockSymbol]);
 
-    useEffect(() => {
-        const cleanup = setupWebSocket();
-        return cleanup;
-    }, [setupWebSocket]);
 
     return (
         <div>
@@ -63,8 +79,7 @@ export function StockChart({stockSymbol, mockStockPrice}) {
                 {marketStatus.earlyHours && (<p>Pre-market</p>)}
                 {marketStatus.afterHours && (<p>After-hours</p>)}
             <select onChange={(e) => setTimeframe(e.target.value)} value={timeframe}>
-                <option value="5m">Live: Last 5 minutes</option>
-                <option value="1d">1 Day</option>
+                <option value="live">Live Updates: Today</option>
                 <option value="1w">1 Week</option>
                 <option value="1m">1 Month</option>
             </select>

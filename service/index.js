@@ -3,6 +3,10 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
+
+const http = require('http')
+const server = http.createServer(app)
+const WebSocket = require('ws');
 require('dotenv').config();
 
 const authCookieName = 'token';
@@ -66,10 +70,7 @@ apiRouter.delete('/auth/logout', async (req, res) => {
 });
 
 apiRouter.get('/stocks', verifyAuth, async (req, res) => {
-  const { query } = req.query;
-  if (!query) {
-    return res.status(400).json({ error: "Missing stock query" });
-  }
+  const {query} = req.query;
   try {
     const response = await fetch(`https://api.polygon.io/v3/reference/tickers?search=${query}&active=true&limit=10&apiKey=${POLYGON_API_KEY}`);
     if (!response.ok) {
@@ -79,64 +80,117 @@ apiRouter.get('/stocks', verifyAuth, async (req, res) => {
     const data = await response.json();
     res.json(data.results || []);
   } catch (err) {
-    console.error("Error fetching stock data:", err.message);
+    console.error("Error in /stocks", err.message);
     res.status(500).json({err: "Error retrieving stock data"});
   }
 });
 
 apiRouter.get('/stocks/stock-data', verifyAuth, async (req, res) => {
-  const { symbol, timeframe } = req.query;
-  if (!symbol || !timeframe) {
-      return res.status(400).json({err: "Missing stock symbol or timeframe"});
-  }
+  const {symbol, timeframe} = req.query;
   try {
-      const statusResponse = await fetch(`https://api.polygon.io/v1/marketstatus/now?apiKey=${POLYGON_API_KEY}`);
-      if (!statusResponse.ok) throw new Error("Failed to fetch market status");
-      const marketStatus = await statusResponse.json();
+    const statusResponse = await fetch(`https://api.polygon.io/v1/marketstatus/now?apiKey=${POLYGON_API_KEY}`);
+    if (!statusResponse.ok) throw new Error("Failed to fetch market status");
+    const marketStatus = await statusResponse.json();
 
-      let data = [];
-      let timespan = "minute";
-      let multiplier = 1;
+    let data = [];
+    let price = null;
 
-      if (timeframe === "1d") {
-          timespan = "day";
-      } else if (timeframe === "1w") {
-          timespan = "day";
-          multiplier = 7;
-      } else if (timeframe === "1m") {
-          timespan = "day";
-          multiplier = 30;
+    if (timeframe === "1w") {
+      let today = new Date();
+      for (let i = 0; i < 7; i++) {
+        let day = new Date();
+        day.setDate(today.getDate()-i);
+        const dateStr = day.toISOString().split("T")[0];
+        const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/hour/${dateStr}/${dateStr}?adjusted=true&sort=asc&limit=1000&apiKey=${POLYGON_API_KEY}`;
+        const response = await fetch(url);
+        const result = await response.json();
+
+        if (result.results) {
+          const dailyData = result.results.map((entry) => {
+            const date = new Date(entry.t);
+            return {
+              time: date.toLocaleDateString("en-US", {timeZone: "America/Denver", hour: "2-digit", minute: "2-digit"}),
+              price: entry.c
+            };
+          });
+          data = [...dailyData, ...data];
+        }
       }
+      price = data.length > 0 ? data[data.length-1].price : null;
+    }
 
+    else if (timeframe === "1m") {
+      let fromDate = new Date();
+      let toDate = new Date();
+      fromDate.setMonth(toDate.getMonth()-1);
+      const fromISO = fromDate.toISOString().split("T")[0];
+      const toISO = toDate.toISOString().split("T")[0];
+
+      const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${fromISO}/${toISO}?adjusted=true&sort=asc&limit=1000&apiKey=${POLYGON_API_KEY}`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Polygon API error: ${response.statusText}`);
+
+      const result = await response.json();
+      data = result.results.map((entry) => {
+        const date = new Date(entry.t);
+        return {
+          time: date.toLocaleDateString("en-US", { timeZone: "America/Denver" }),
+          price: entry.c
+        };
+      });
+      price = result.results[result.results.length-1]?.c ?? null;
+    }
+
+    else {
       const today = new Date().toISOString().split("T")[0];
-      if (marketStatus.market === "closed") {
-          let yesterday = new Date();
-          yesterday.setDate(yesterday.getDate()-1);
-          const prevDate = yesterday.toISOString().split("T")[0];
+      const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/minute/${today}/${today}?adjusted=true&sort=asc&limit=1000&apiKey=${POLYGON_API_KEY}`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Polygon API error: ${response.statusText}`);
 
-          const prevDayUrl = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/minute/${prevDate}/${prevDate}?adjusted=true&sort=asc&limit=1000&apiKey=${POLYGON_API_KEY}`;
-          const prevDayResponse = await fetch(prevDayUrl);
-          if (!prevDayResponse.ok) throw new Error("Failed to fetch previous day's data");
+      const result = await response.json();
+      data = result.results.map(entry => ({
+        time: new Date(entry.t).toLocaleTimeString("en-US", {timeZone: "America/Denver"}),
+        price: entry.c
+      }));
+      price = result.results[result.results.length-1].c;
+    }
 
-          const prevDayData = await prevDayResponse.json();
-          if (prevDayData.results) {
-              data = prevDayData.results.map(entry => ({time: new Date(entry.t).toLocaleTimeString(), price: entry.c,}));
-              price = prevDayData.results[prevDayData.results.length-1].c;
-          }
-      } else {
-          const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/${multiplier}/${timespan}/${today}/${today}?adjusted=true&sort=asc&limit=100&apiKey=${POLYGON_API_KEY}`;
-          const response = await fetch(url);
-          if (!response.ok) throw new Error(`Polygon API error: ${response.statusText}`);
-
-          const result = await response.json();
-          data = result.results.map((entry) => ({time: new Date(entry.t).toLocaleTimeString(), price: entry.c,}));
-          price = result.results[result.results.length-1].c;
-      }
-      res.json({data, marketStatus, price});
+    res.json({data, marketStatus, price});
 
   } catch (err) {
-      console.error("Error fetching stock data:", err.message);
-      res.status(500).json({err: "Error retrieving stock data"});
+    console.error("Error in /stocks/stock-data", err.message);
+    res.status(500).json({err: "Error retrieving stock data"});
+  }
+});
+
+apiRouter.get('/stocks/live-history', verifyAuth, async (req, res) => {
+  const {symbol} = req.query;
+  try {
+    const statusResponse = await fetch(`https://api.polygon.io/v1/marketstatus/now?apiKey=${POLYGON_API_KEY}`);
+    if (!statusResponse.ok) throw new Error("Failed to fetch market status");
+    const marketStatus = await statusResponse.json();
+
+    let dateToUse = new Date();
+    if (marketStatus.market === "closed") {
+      dateToUse.setDate(dateToUse.getDate() - 1);
+    }
+
+    const dateStr = dateToUse.toISOString().split("T")[0];
+    const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/minute/${dateStr}/${dateStr}?adjusted=true&sort=asc&limit=1000&apiKey=${POLYGON_API_KEY}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Polygon API error");
+
+    const result = await response.json();
+    const data = result.results.map((entry) => ({
+      time: new Date(entry.t).toLocaleTimeString("en-US", {timeZone: "America/Denver"}),
+      price: entry.c,
+    }));
+    const lastPrice = data[data.length-1]?.price ?? null;
+
+    res.json({data, price: lastPrice, marketStatus});
+  } catch (err) {
+    console.error("Error in /stocks/live-history:", err);
+    res.status(500).json({err: "Could not load live history"});
   }
 });
 
@@ -205,6 +259,82 @@ async function findUser(field, value) {
   return users.find((u) => u[field] === value);
 }
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
+// app.listen(port, () => {
+//   console.log(`Listening on port ${port}`);
+// });
+
+// ----------------------WebSocket Logic----------------------------------
+// Polygon's WS API limits a user to 1 active connection per symbol (and API key, technically).
+// In order to circumvent this limitaton, the following server-side WS architecture enables 
+// multiple subscriptions to the same symbol. Each client will open a WS connection in the front end 
+// that is processed as an incoming connection to the singular WS connection for the back end, which 
+// serves as a proxy for connections between users and Polygon.
+
+const polygonSocket = new WebSocket('wss://delayed.polygon.io/stocks');
+polygonSocket.on('open', function open() {
+  polygonSocket.send(JSON.stringify({action: 'auth', params: process.env.POLYGON_API_KEY}));
+});
+polygonSocket.on('error', (err) => console.error('Polygon WS error:', err));
+polygonSocket.on('close', () => console.log('Polygon WS closed.'));
+
+const wss = new WebSocket.Server({server});
+const clientSubscriptions = new Map();
+
+wss.on('connection', (clientWs) => {
+  console.log('Front-end client connected to WS proxy.');
+
+  clientSubscriptions.set(clientWs, []);
+  clientWs.on('message', (msg) => {
+    let data = JSON.parse(msg);
+    if (data.type === 'subscribe' && data.symbol) {
+      const currentSubs = clientSubscriptions.get(clientWs) || [];
+      if (!currentSubs.includes(data.symbol)) {
+        currentSubs.push(data.symbol);
+        clientSubscriptions.set(clientWs, currentSubs);
+      }
+      polygonSocket.send(JSON.stringify({action: 'subscribe', params: `A.${data.symbol}`}));
+      console.log(`Client subscribed to A.${data.symbol}`);
+
+    } else if (data.type === 'unsubscribe' && data.symbol) {
+      const currentSubs = clientSubscriptions.get(clientWs) || [];
+      clientSubscriptions.set(clientWs, currentSubs.filter(sym => sym !== data.symbol));
+      // This isn't going to work; one client will unsubscribe for all clients?
+      polygonSocket.send(JSON.stringify({action: 'unsubscribe', params: `A.${data.symbol}`}));
+      console.log(`Client unsubscribed from A.${data.symbol}`);
+    }
+
+  });
+
+  clientWs.on('close', () => {
+    console.log('Front-end client disconnected.');
+    clientSubscriptions.delete(clientWs);
+  });
+});
+
+polygonSocket.on('message', (rawData) => {
+  let parsed = JSON.parse(rawData)
+  if (!Array.isArray(parsed)) {
+    return;
+  }
+
+  parsed.forEach((event) => {
+    // console.log(event)
+    if (event.ev === 'A') {
+      const symbol = event.sym; 
+      console.log(event)
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          const subs = clientSubscriptions.get(client) || [];
+          if (subs.includes(symbol)) {
+            client.send(JSON.stringify(event));
+          }
+        }
+      });
+    }
+  });
+});
+
+// ---------------------------------------------------------------------
+server.listen(port, () => {
+  console.log(`Listening on http://localhost:${port}`);
 });
