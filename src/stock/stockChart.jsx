@@ -21,7 +21,7 @@ export function StockChart({stockSymbol, mockStockPrice}) {
                 console.error("Error fetching stock data:", err);
             }
         }
-        
+
         fetchStockData();
     }, [stockSymbol, timeframe]);
  
@@ -69,7 +69,7 @@ export function StockChart({stockSymbol, mockStockPrice}) {
                 wsRef.current.close();
                 }
             };
-    }, [stockSymbol]);
+    }, [stockSymbol, timeframe]);
 
 
     return (
