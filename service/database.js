@@ -17,8 +17,8 @@ const userCollection = db.collection('user');
   }
 })();
 
-function getUser(userName) {
-  return userCollection.findOne({ userName: userName });
+function getUser(username) {
+  return userCollection.findOne({ username: username });
 }
 
 function getUserByToken(token) {
@@ -30,11 +30,11 @@ async function addUser(user) {
 }
 
 async function updateUser(user) {
-  await userCollection.updateOne({ userName: user.userName }, { $set: user });
+  await userCollection.updateOne({ username: user.username }, { $set: {token: user.token, portfolioValue: user.portfolioValue} });
 }
 
-async function updatePortfolioValue(userName, portfolioValue) {
-  await userCollection.updateOne({ userName }, { $set: { portfolioValue } }, { upsert: false});
+async function updatePortfolioValue(username, portfolioValue) {
+  await userCollection.updateOne({ username }, { $set: { portfolioValue } }, { upsert: false});
 }
 
 function getTopPortfolios() {
