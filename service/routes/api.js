@@ -1,7 +1,7 @@
 const express = require('express');
 const apiRouter = express.Router();
 const DB = require('../database.js');
-const { setAuthCookie, createUser, findUser, verifyAuth, authCookieName } = require('../auth/util');
+const { setAuthCookie, createUser, findUser, verifyAuth, authCookieName } = require('../auth/utils.js');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
 const fetch = require('node-fetch');
