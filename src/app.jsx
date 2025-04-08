@@ -35,7 +35,7 @@ export default function App() {
                     <h3 className="app-header-title">Wall Street Casino</h3>
                     <li><NavLink to="">Home</NavLink></li>
                     {authState === AuthState.Authenticated && (<li><NavLink to="portfolio">Portfolio</NavLink></li>)}
-                    {authState === AuthState.Authenticated && (<li><NavLink to="stock">View Stock</NavLink></li>)}
+                    {authState === AuthState.Authenticated && (<li><NavLink to="stock">Stock Room</NavLink></li>)}
                     {authState === AuthState.Authenticated && (<li><NavLink to="leaderboard">Leaderboard</ NavLink></li>)}
                     {authState === AuthState.Authenticated && 
                         (<li><LogoutButton onAuthChange={(userName, authState) => {
