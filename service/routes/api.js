@@ -5,6 +5,7 @@ const { setAuthCookie, createUser, findUser, verifyAuth, authCookieName } = requ
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
 
+require('dotenv').config();
 const POLYGON_API_KEY = process.env.POLYGON_API_KEY; 
 
 apiRouter.post('/auth/create', async (req, res) => {

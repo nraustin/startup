@@ -1,4 +1,5 @@
 const WebSocket = require('ws');
+require('dotenv').config();
 
 // ----------------------WebSocket Logic----------------------------------
 // Polygon's WS API limits a user to 1 active connection per symbol (and API key, technically).
