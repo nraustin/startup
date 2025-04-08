@@ -55,7 +55,7 @@ export function Stock({ userName, portfolioValue, setPortfolioValue}) {
     await fetch(`/api/update-portfolio`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({username: userName, portfolioValue: newPortfolioValue}),
+        body: JSON.stringify({portfolioValue: newPortfolioValue}),
     });
   }
 

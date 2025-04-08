@@ -3,6 +3,7 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
+const DB = require('./database.js');
 
 const http = require('http')
 const server = http.createServer(app)
@@ -52,6 +53,7 @@ apiRouter.post('/auth/login', async (req, res) => {
   if (user) {
     if (await bcrypt.compare(req.body.password, user.password)) {
       user.token = uuid.v4();
+      await DB.updateUser(user);
       setAuthCookie(res, user.token);
       res.send({ username: user.username });
       return;
@@ -64,6 +66,7 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   const user = await findUser('token', req.cookies[authCookieName]);
   if (user) {
     delete user.token;
+    await DB.updateUser(user);
   }
   res.clearCookie(authCookieName);
   res.status(204).end();
@@ -194,31 +197,23 @@ apiRouter.get('/stocks/live-history', verifyAuth, async (req, res) => {
   }
 });
 
-let tempUsers = {
-  "Jack": {username: "Jack", portfolioValue: Math.floor(Math.random()*5000) + 500},
-  "Kate": {username: "Kate", portfolioValue: Math.floor(Math.random()*5000) + 500},
-  "Sawyer": {username: "Sawyer", portfolioValue: Math.floor(Math.random()*5000) + 500}
-}
+// let tempUsers = {
+//   "Jack": {username: "Jack", portfolioValue: Math.floor(Math.random()*5000) + 500},
+//   "Kate": {username: "Kate", portfolioValue: Math.floor(Math.random()*5000) + 500},
+//   "Sawyer": {username: "Sawyer", portfolioValue: Math.floor(Math.random()*5000) + 500}
+// }
 
-apiRouter.get('/leaderboard', verifyAuth, (req, res) => {
-  const {username, portfolioValue} = req.user;
-
-  // if bet not placed
-  if (!tempUsers[username]){
-    tempUsers[username] = {username, portfolioValue: portfolioValue}
-  }
-
-  const rankedUsers = Object.values(tempUsers).sort((a, b) => b.portfolioValue - a.portfolioValue);
-  res.json(rankedUsers);
+apiRouter.get('/leaderboard', verifyAuth, async (req, res) => {
+  const topUsers = await DB.getTopPortfolios();
+  res.json(topUsers);
 });
 
-apiRouter.post('/update-portfolio', verifyAuth, (req, res) => {
-  const {username, portfolioValue} = req.body;
-  if (!username || portfolioValue === undefined) {
-      return res.status(400).json({error: "Invalid request data"});
-  }
-  tempUsers[username] = {username, portfolioValue};
-  res.json({message: "Portfolio updated successfully"});
+apiRouter.post('/update-portfolio', verifyAuth, async (req, res) => {
+  const {portfolioValue} = req.body;
+  const {username} = req.user;
+  await DB.updatePortfolioValue(username, portfolioValue);
+  const topUsers = await DB.getTopPortfolios();
+  res.json(topUsers);
 });
 
 app.use(function (err, req, res, next) {
@@ -248,6 +243,7 @@ async function createUser(username, password) {
     token: uuid.v4(),
     portfolioValue: 1000,
   };
+  await DB.addUser(user);
   users.push(user);
 
   return user;
@@ -256,7 +252,10 @@ async function createUser(username, password) {
 async function findUser(field, value) {
   if (!value) return null;
 
-  return users.find((u) => u[field] === value);
+  if (field === 'token') {
+      return DB.getUserByToken(value);
+    }
+    return DB.getUser(value);
 }
 
 // app.listen(port, () => {
