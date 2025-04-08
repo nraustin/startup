@@ -39,10 +39,11 @@ export function StockChart({stockSymbol, mockStockPrice}) {
           }
         
         preloadTodayData();
-        // changed for production
-        const ws = new WebSocket("wss://startup.wallstreetcasino.click/ws"); 
-        wsRef.current = ws;
 
+        const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+        const host = import.meta.env.DEV ? 'localhost:4000' : window.location.host;
+        const ws = new WebSocket(`${protocol}://${host}/polygon`);
+        wsRef.current = ws;
         ws.onopen = () => {
             ws.send(JSON.stringify({type: 'subscribe', symbol: stockSymbol}));
         };

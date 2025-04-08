@@ -99,7 +99,7 @@ export function Stock({ userName, portfolioValue, setPortfolioValue}) {
           </tr>
         </tbody>
       </table>
-      <Chatroom userName={userName} />
+      <Chatroom userName={userName} stockSymbol={stockSymbol} />
     </main>
   );
 }

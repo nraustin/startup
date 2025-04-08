@@ -15,7 +15,7 @@ function initPolygonProxy(server) {
     polygonSocket.on('error', (err) => console.error('Polygon WS error:', err));
     polygonSocket.on('close', () => console.log('Polygon WS closed.'));
     
-    const wss = new WebSocket.Server({server});
+    const wss = new WebSocket.Server({noServer: true});
     const clientSubscriptions = new Map();
     
     wss.on('connection', (clientWs) => {

@@ -1,12 +1,13 @@
 import React from 'react';
 import { chatNotifier } from './chatNotifier';
 
-export function Chatroom ( {userName} ) {
+export function Chatroom ( {userName, stockSymbol} ) {
     const [messages, setMessages] = React.useState([]);
     const [inputMessage, setInputMessage] = React.useState("");
     React.useEffect(() => {
+        chatNotifier.connect(stockSymbol);
         chatNotifier.subscribe(setMessages);
-    }, []);
+    }, [stockSymbol]);
 
     function handleSendMessage() {
         if (inputMessage.trim()) {
