@@ -4,7 +4,6 @@ const DB = require('../database.js');
 const { setAuthCookie, createUser, findUser, verifyAuth, authCookieName } = require('../auth/utils.js');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
-const fetch = require('node-fetch');
 
 const POLYGON_API_KEY = process.env.POLYGON_API_KEY; 
 
