@@ -141,28 +141,28 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Node.js/Express HTTP service** - I did not complete this part of the deliverable.
-- [ ] **Static middleware for frontend** - I did not complete this part of the deliverable.
-- [ ] **Calls to third party endpoints** - I did not complete this part of the deliverable.
-- [ ] **Backend service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Frontend calls service endpoints** - I did not complete this part of the deliverable.
+- [X] **Node.js/Express HTTP service** - Routing, middleware, and request handling performed with Express framework and Node.js runtime.
+- [X] **Static middleware for frontend** - Used built-in Express middleware and Vite to serve up static files.
+- [X] **Calls to third party endpoints** - Many endpoints to Polygon.io.
+- [X] **Backend service endpoints** - Routes for authentication, stock rooms, and portfolio using the express.Router() handler, async/await and and Node fetch.
+- [X] **Frontend calls service endpoints** - Calls in every component to backend service endpoints using async/await and Node fetch.
 
 ## 🚀 DB/Login deliverable
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **User registration** - I did not complete this part of the deliverable.
-- [ ] **User login and logout** - I did not complete this part of the deliverable.
-- [ ] **Stores data in MongoDB** - I did not complete this part of the deliverable.
-- [ ] **Stores credentials in MongoDB** - I did not complete this part of the deliverable.
-- [ ] **Restricts functionality based on authentication** - I did not complete this part of the deliverable.
+- [X] **User registration** - User credentials hashed and persistently stored in NoSQL database (Mongo).
+- [X] **User login and logout** - Provided credentials queried + authentication created upon successful logins. Token deleted upon logout.
+- [X] **Stores data in MongoDB** - Portfolio values, username, and credentials stored via MongoDB's Binary JSON collections architecture.
+- [X] **Stores credentials in MongoDB** - Same as above.
+- [X] **Restricts functionality based on authentication** - Authentication middleware queries MongoDB for user tokens.
 
 ## 🚀 WebSocket deliverable
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Backend listens for WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Frontend makes WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Data sent over WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **WebSocket data displayed** - I did not complete this part of the deliverable.
-- [ ] **Application is fully functional** - I did not complete this part of the deliverable.
+- [X] **Backend listens for WebSocket connection** - Polygon proxy WS and Chat WS manually upgrade HTTP requests from parsed URLs.
+- [X] **Frontend makes WebSocket connection** - Client connections send HTTP request with intent to upgrade.
+- [X] **Data sent over WebSocket connection** - Various stock data and user chat messages sent over WS.
+- [X] **WebSocket data displayed** - Stock data displayed on charts, chat messages in chat rooms.
+- [X] **Application is fully functional** - All intended functionality operating with no discovered bugs to date. 
