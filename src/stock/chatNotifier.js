@@ -39,9 +39,10 @@ class ChatNotifier {
     }
 
     sendMessage(username, message) {
-        const chatMsg = {username, message};
+        const msgObj = typeof message === 'string' ? {username, message} : { ...message, username};
+        console.log(msgObj);
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-            this.ws.send(JSON.stringify(chatMsg));
+            this.ws.send(JSON.stringify(msgObj));
         }
     }
 }

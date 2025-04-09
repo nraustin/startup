@@ -21,11 +21,27 @@ export function Chatroom ( {userName, stockSymbol} ) {
             <tbody>
             <tr className="chatbox-container">
                 <td className="chatbox">
-                    {messages.map((msg, i) => (
-                        <p key={i}>
-                            <strong>{msg.username}:</strong> {msg.message} <span className="timestamp">({msg.timestamp})</span>
-                        </p>
-                    ))}
+                    {messages.length === 0 ? (
+                        <p className="empty-chat-msg">Looks pretty empty in here....</p>
+                    ) : (
+                        messages.map((msg, i) => (
+                            <p key={i}>
+                            <strong>{msg.username}:</strong>{' '}
+                            {msg.betType ? (
+                                <>
+                                placed a{' '}
+                                <span style={{color: msg.betType === 'higher' ? 'green' : 'red', fontWeight: 'bold'}}>
+                                {msg.betType.toUpperCase()}
+                                </span>{' '}
+                                bet
+                                </>
+                            ) : (
+                                msg.text || msg.message
+                            )}
+                            <span className="timestamp"> ({msg.timestamp})</span>
+                          </p>
+                        ))
+                    )}
                 </td>
             </tr>
             <tr className="chatbox-send-msg-container">

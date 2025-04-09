@@ -19,7 +19,7 @@ function initChatServer(server) {
     })
     clientWs.on('message', (msg) => {
       const parsed = JSON.parse(msg);
-      const chatMsg = {username: parsed.username, message: parsed.message, timestamp: new Date().toLocaleTimeString(), symbol};
+      const chatMsg = {...parsed, timestamp: parsed.timestamp || new Date().toLocaleTimeString(), symbol};
       if(!chatHistory.has(symbol)){
         chatHistory.set(symbol, []);
       }

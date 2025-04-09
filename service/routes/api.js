@@ -157,6 +157,7 @@ apiRouter.get('/stocks/live-history', verifyAuth, async (req, res) => {
     if (!response.ok) throw new Error("Polygon API error");
 
     const result = await response.json();
+    console.log(result)
     const data = result.results.map((entry) => ({
       time: new Date(entry.t).toLocaleTimeString("en-US", {timeZone: "America/Denver"}),
       price: entry.c,

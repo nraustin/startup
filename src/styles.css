@@ -187,6 +187,7 @@ main {
 .chatbox {
     padding: 10px;
     width: 80%;
+    height: 220px;
     overflow-y: auto;
     scroll-behavior: smooth;
     color: white;
@@ -211,6 +212,13 @@ main {
     border: none;
     background-color: rgb(253, 140, 84);
     border-radius: 2px;
+}
+
+.empty-chat-msg{
+    padding-top: 80px;
+    text-align: center;
+    font-style: italic;
+    color: slategray;
 }
 
 .table-leaderboard{

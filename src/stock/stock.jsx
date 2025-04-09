@@ -6,8 +6,10 @@ import { useState, useEffect } from 'react';
 import { Chatroom } from './chatroom';
 import { StockChart } from './stockChart';
 import { blackScholes, TTE } from './blackScholes';
+import { chatNotifier } from './chatNotifier';
 
 export function Stock({ userName, portfolioValue, setPortfolioValue}) {
+  // Bet values are calculated dynamically and equally for all users based on live data and are transient; persistent storage for bet values is therefore not necessary
   const [bet, setBet] = useState(localStorage.getItem('bet') || '');
   const [stockPrice, setStockPrice] = useState(parseFloat(localStorage.getItem('stockPrice')) || 100);
   const [higherBetValue, setHigherBetValue] = useState(parseFloat(localStorage.getItem('higherBetValue')) || 250);
@@ -62,6 +64,8 @@ export function Stock({ userName, portfolioValue, setPortfolioValue}) {
     const betValue = betType === "higher" ? higherBetValue : lowerBetValue;
     setBetEntryPrice(betValue);
     localStorage.setItem('initialBetAmount', betValue);
+
+    chatNotifier.sendMessage(userName, {text: `placed a ${betType.toUpperCase()} bet`, betType, timestamp: new Date().toLocaleTimeString()});
   }
 
   function closeBet() {
