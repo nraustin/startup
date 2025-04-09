@@ -4,9 +4,19 @@ import { chatNotifier } from './chatNotifier';
 export function Chatroom ( {userName, stockSymbol} ) {
     const [messages, setMessages] = React.useState([]);
     const [inputMessage, setInputMessage] = React.useState("");
+    // React.useEffect(() => {
+    //     chatNotifier.connect(stockSymbol);
+    //     chatNotifier.subscribe(setMessages);
+    // }, [stockSymbol]);
     React.useEffect(() => {
         chatNotifier.connect(stockSymbol);
-        chatNotifier.subscribe(setMessages);
+    
+        const callback = (msgs) => setMessages(msgs);
+        chatNotifier.subscribe(callback);
+    
+        return () => {
+            chatNotifier.unsubscribe(callback);
+        };
     }, [stockSymbol]);
 
     function handleSendMessage() {
