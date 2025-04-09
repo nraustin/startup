@@ -4,6 +4,7 @@ const DB = require('../database.js');
 const { setAuthCookie, createUser, findUser, verifyAuth, authCookieName } = require('../auth/utils.js');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
+const { DateTime} = require('luxon');
 
 require('dotenv').config();
 const POLYGON_API_KEY = process.env.POLYGON_API_KEY; 
@@ -181,6 +182,31 @@ apiRouter.post('/update-portfolio', verifyAuth, async (req, res) => {
   const topUsers = await DB.getTopPortfolios();
   res.json(topUsers);
 });
+
+apiRouter.get('/portfolio/:username', verifyAuth, async (req, res) => {
+  const username = req.params.username;
+  console.log(username);
+  const user = await DB.getUser(username);
+  res.json({portfolioValue: user.portfolioValue});
+});
+
+apiRouter.get('/market-open/:symbol', async (req, res) => {
+  const symbol = req.params.symbol.toUpperCase();
+  const now = DateTime.now().setZone('America/Denver')
+  const marketOpenTime = now.set({hour: 7, minute: 30})
+  const targetDate = now < marketOpenTime ? now.minus({days: 1}) : now;
+  const dateStr = targetDate.toISODate();
+  const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/minute/${dateStr}/${dateStr}?adjusted=true&sort=asc&limit=1&apiKey=${process.env.POLYGON_API_KEY}`;
+  const response = await fetch(url);
+  const data = await response.json();
+
+  if (!data.results?.length) {
+    return res.status(404).json({error: 'No open price found'});
+  }
+  const openPrice = data.results[0].o;
+  res.json({symbol, openPrice, date: dateStr});
+});
+
 
 module.exports = apiRouter;
 

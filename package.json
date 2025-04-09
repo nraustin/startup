@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
+    "luxon": "^3.6.1",
+    "mathjs": "^14.4.0",
     "mongodb": "^6.15.0",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",

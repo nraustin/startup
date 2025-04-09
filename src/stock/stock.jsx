@@ -5,6 +5,7 @@ import { BetOptions } from './betOptions';
 import { useState, useEffect } from 'react';
 import { Chatroom } from './chatroom';
 import { StockChart } from './stockChart';
+import { blackScholes, TTE } from './blackScholes';
 
 export function Stock({ userName, portfolioValue, setPortfolioValue}) {
   const [bet, setBet] = useState(localStorage.getItem('bet') || '');
@@ -14,44 +15,39 @@ export function Stock({ userName, portfolioValue, setPortfolioValue}) {
   const [stockSymbol, setStockSymbol] = useState(localStorage.getItem('selectedStock') || 'NVDA');
   const [betEntryPrice, setBetEntryPrice] = useState(parseFloat(localStorage.getItem('initialBetAmount')) || 250);
 
-  const MIN_PRICE = 90;
-  const MAX_PRICE = 110;
-  const BET_CHG_PERCENT = .1;
-  const MIN_BET_VALUE = 50;
+  const [openPrice, setOpenPrice] = useState(null);
 
   useEffect(() => {
-    const interval = setInterval(() =>{
-      setStockPrice((prevPrice) => {
-        let chg = Math.random() < .5 ? -1 : 1;
-        let newPrice = prevPrice+ chg;
+    async function fetchOpenPrice() {
+      const res = await fetch(`/api/market-open/${stockSymbol}`);
+      const data = await res.json();
+      setOpenPrice(data.openPrice);
+    }
+    fetchOpenPrice();
+  }, [stockSymbol]);
 
-        if (newPrice < MIN_PRICE || newPrice > MAX_PRICE){
-          return prevPrice;
-        }
+  useEffect(() => {
+    setBet('');
+    setBetEntryPrice(null);
+    localStorage.removeItem('bet');
+    localStorage.removeItem('initialBetAmount');
+  }, [userName]);
 
-        setHigherBetValue((prev) => {
-          const newVal = Math.max(prev * (chg === 1 ? (1 + BET_CHG_PERCENT) : (1 - BET_CHG_PERCENT)), MIN_BET_VALUE);
-          localStorage.setItem('higherBetValue', newVal);
-          return newVal;
-        });
+  useEffect(() => {
+    if (!openPrice) return;
+    const riskFreeRate = 0.01;
+    const volatility = 0.2;
+    const timeToExpiration = TTE();
+    const callStrike = openPrice+3;
+    const putStrike = openPrice-3;
+    const call = blackScholes(stockPrice, callStrike, timeToExpiration, riskFreeRate, volatility).call;
+    const put = blackScholes(stockPrice, putStrike, timeToExpiration, riskFreeRate, volatility).put;
 
-        setLowerBetValue((prev) => {
-          const newVal = Math.max(prev * (chg === -1 ? (1 + BET_CHG_PERCENT) : (1 - BET_CHG_PERCENT)), MIN_BET_VALUE);
-          localStorage.setItem('lowerBetValue', newVal);
-          return newVal;
-        });
-
-        localStorage.setItem('stockPrice', newPrice);
-        return newPrice;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+    setHigherBetValue(call);
+    setLowerBetValue(put);
+  }, [stockPrice, openPrice]);
 
   async function updatePortfolio(newPortfolioValue) {
-    localStorage.setItem("portfolioValue", newPortfolioValue);
-    
     await fetch(`/api/update-portfolio`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -92,7 +88,7 @@ export function Stock({ userName, portfolioValue, setPortfolioValue}) {
         <tbody>
           <tr className="stockchart-and-bet-container">
             <td className="stockchart-container">
-              <StockChart stockSymbol={stockSymbol} mockStockPrice={stockPrice.toFixed(2)}/>
+              <StockChart stockSymbol={stockSymbol} onPriceUpdate={setStockPrice}/>
             </td>
             {!bet && <BetOptions placeBet={placeBet} higherBetValue={higherBetValue} lowerBetValue={lowerBetValue}/>}
             {bet && <BetPlaced betType={bet} betAmount={bet === "higher" ? higherBetValue : lowerBetValue} closeBet={closeBet}/>}

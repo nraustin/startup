@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef} from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
-export function StockChart({stockSymbol, mockStockPrice}) {
+export function StockChart({stockSymbol, onPriceUpdate}) {
     const [data, setData] = useState([]);
     const wsRef = useRef(null);
     const [timeframe, setTimeframe] = useState("live");
@@ -17,8 +17,9 @@ export function StockChart({stockSymbol, mockStockPrice}) {
                 setData(result.data);
                 setMarketStatus(result.marketStatus);
                 setLastPrice(result.price.toFixed(2));
+                onPriceUpdate?.(result.price);
             } catch (err) {
-                console.error("Error fetching stock data:", err);
+                console.error("Error fetching stock data", err);
             }
         }
 
@@ -33,6 +34,7 @@ export function StockChart({stockSymbol, mockStockPrice}) {
               const result = await response.json();
               setData(result.data);
               setLastPrice(result.price?.toFixed(2));
+              onPriceUpdate?.(result.price);
             } catch (err) {
               console.error("Error preloading day data", err);
             }

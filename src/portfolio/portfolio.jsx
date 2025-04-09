@@ -7,10 +7,6 @@ export function Portfolio({ username, portfolioValue  }) {
   const [symbolSuggestions, setSymbolSuggestions] = useState([]);
   const navigate = useNavigate()
 
-  React.useEffect(() => {
-    localStorage.setItem('portfolioValue', portfolioValue);
-  }, [portfolioValue]);
-
   async function fetchStockSuggestions(query) {
     if (!query.trim()) {
       setSymbolSuggestions([]);

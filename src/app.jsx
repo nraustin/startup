@@ -17,14 +17,19 @@ export default function App() {
   const [portfolioValue, setPortfolioValue] = React.useState(parseFloat(localStorage.getItem(`portfolio_${userName}`)) || 1000)
 
     React.useEffect(() => {
-        if (userName) {
-            let users = localStorage.getItem('users');
-            users = users ? JSON.parse(users) : {}
-            users[userName] = portfolioValue;
-            localStorage.setItem('users', JSON.stringify(users));
-            console.log(userName)
+        async function fetchPortfolio() {
+            if (!userName) return;
+            try {
+                const response = await fetch(`/api/portfolio/${userName}`);
+                if (!response.ok) throw new Error("Failed to fetch portfolio");
+                const data = await response.json();
+                setPortfolioValue(data.portfolioValue);
+            } catch (err) {
+                console.error("Error fetching portfolio value:", err);
+            }
         }
-    }, [portfolioValue, userName]);
+        fetchPortfolio();
+    }, [userName]);
 
   return (
     <BrowserRouter>
