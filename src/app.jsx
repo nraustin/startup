@@ -14,7 +14,7 @@ export default function App() {
   const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
   const currentAuthState = userName ? AuthState.Authenticated : AuthState.Unauthenticated;
   const [authState, setAuthState] = React.useState(currentAuthState);  
-  const [portfolioValue, setPortfolioValue] = React.useState(parseFloat(localStorage.getItem(`portfolio_${userName}`)) || 1000)
+  const [portfolioValue, setPortfolioValue] = React.useState(null);
 
     React.useEffect(() => {
         async function fetchPortfolio() {
