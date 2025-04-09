@@ -23,6 +23,7 @@ export default function App() {
                 const response = await fetch(`/api/portfolio/${userName}`);
                 if (!response.ok) throw new Error("Failed to fetch portfolio");
                 const data = await response.json();
+                console.log(data);
                 setPortfolioValue(data.portfolioValue);
             } catch (err) {
                 console.error("Error fetching portfolio value:", err);

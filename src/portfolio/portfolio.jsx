@@ -44,8 +44,9 @@ export function Portfolio({ username, portfolioValue  }) {
     <main className="main-portfolio">
       <div className="portfolio-container">
         <h2 className="portfolio-welcome-msg">Hi, {username}.</h2>
-        <p>
-          Portfolio value: <strong>${portfolioValue.toFixed(2)} USD</strong>
+        <p> 
+          Portfolio value:{' '}
+          <strong>{portfolioValue != null ? `$${portfolioValue.toFixed(2)} USD` : 'Loading...'}</strong>
         </p>
       </div>
 
